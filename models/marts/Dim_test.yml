@@ -1,0 +1,149 @@
+version: 2
+
+models:
+  # ==========================
+  # Dim_Customer
+  # ==========================
+  - name: Dim_Customer
+    columns:
+      - name: customer_key
+        tests:
+          - not_null
+          - unique
+      - name: ACCOUNT_NUMBER
+        tests:
+          - not_null
+      - name: CUSTOMER_AGE
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: CUSTOMER_GENDER
+        tests:
+          - accepted_values:
+              values: ['Male','Female','Others']
+      - name: CUSTOMER_OCCUPATION
+        tests:
+          - not_null
+      - name: CUSTOMER_INCOME
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: ACCOUNT_BALANCE
+        tests:
+          - not_null
+      - name: is_current
+        tests:
+          - accepted_values:
+              values: [0,1]
+
+  # ==========================
+  # Dim_Category
+  # ==========================
+  - name: Dim_Category
+    columns:
+      - name: CATEGORY_KEY
+        tests:
+          - not_null
+          - unique
+      - name: CATEGORY
+        tests:
+          - not_null
+
+  # ==========================
+  # Dim_Merchant
+  # ==========================
+  - name: Dim_Merchant
+    columns:
+      - name: MERCHANT_KEY
+        tests:
+          - not_null
+          - unique
+      - name: MERCHANT_NAME
+        tests:
+          - not_null
+
+  # ==========================
+  # Dim_PaymentMethod
+  # ==========================
+  - name: Dim_PaymentMethod
+    columns:
+      - name: PAYMENT_METHOD_KEY
+        tests:
+          - not_null
+          - unique
+      - name: PAYMENT_METHOD
+        tests:
+          - not_null
+
+  # ==========================
+  # Dim_TransactionType
+  # ==========================
+  - name: Dim_TransactionType
+    columns:
+      - name: TRANSACTION_TYPE_KEY
+        tests:
+          - not_null
+          - unique
+      - name: TRANSACTION_TYPE
+        tests:
+          - not_null
+
+  # ==========================
+  # Dim_Location
+  # ==========================
+  - name: Dim_Location
+    columns:
+      - name: LOCATION_KEY
+        tests:
+          - not_null
+          - unique
+      - name: CITY
+        tests:
+          - not_null
+
+   
+  # # ==========================
+  # # Dim_Date
+  # # ==========================
+  # - name: Dim_Date
+  #   columns:
+  #     - name: DATE_KEY
+  #       tests:
+  #         - not_null
+  #         - unique
+  #     - name: FULL_DATE
+  #       tests:
+  #         - not_null
+  #     - name: YEAR
+  #       tests:
+  #         - not_null
+  #     - name: MONTH
+  #       tests:
+  #         - not_null
+  #     - name: DAY
+  #       tests:
+  #         - not_null
+  #     - name: QUARTER
+  #       tests:
+  #         - not_null
+
+  # # ==========================
+  # # Dim_Time
+  # # ==========================
+  # - name: Dim_Time
+  #   columns:
+  #     - name: TIME_KEY
+  #       tests:
+  #         - not_null
+  #         - unique
+  #     - name: FULL_TIME
+  #       tests:
+  #         - not_null
+  #     - name: hour
+  #       tests:
+  #         - not_null
+  #     - name: minute
+  #       tests:
+  #         - not_null

@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database:  DB_BANK          
+    schema: RAW              
+
+    tables:
+      - name: BANKING_TRANSACTIONS
+        

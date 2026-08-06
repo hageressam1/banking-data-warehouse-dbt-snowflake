@@ -1,0 +1,92 @@
+version: 2
+
+models:
+  - name: Fat_Transaction
+    columns:
+      # Primary Key
+      - name: TRANSACTION_ID
+        tests:
+          - not_null
+          - unique
+
+      # Foreign Keys
+      - name: customer_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('Dim_Customer')
+              field: customer_key
+      - name: category_key
+        tests:
+          - relationships:
+              to: ref('Dim_Category')
+              field: category_key
+      - name: merchant_key
+        tests:
+          - relationships:
+              to: ref('Dim_Merchant')
+              field: merchant_key
+      - name: payment_method_key
+        tests:
+          - relationships:
+              to: ref('Dim_PaymentMethod')
+              field: payment_method_key
+      - name: transaction_type_key
+        tests:
+          - relationships:
+              to: ref('Dim_TransactionType')
+              field: transaction_type_key
+      - name: location_key
+        tests:
+          - relationships:
+              to: ref('Dim_Location')
+              field: location_key
+      - name: transaction_date_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('Dim_Date')
+              field: DATE_KEY
+      - name: transaction_time_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('Dim_Time')
+              field: TIME_KEY
+
+      # Measures
+      - name: TRANSACTION_AMOUNT
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: LOYALTY_POINTS_EARNED
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      # Flags
+      - name: FRAUD_FLAG
+        tests:
+          - accepted_values:
+              values: [0,1]
+      - name: TRANSACTION_STATUS
+        tests:
+          - accepted_values:
+              values: [0,1]
+      - name: DISCOUNT_APPLIED
+        tests:
+          - accepted_values:
+              values: [0,1]
+
+      # Optional: test uniqueness على combination 
+      # - name: ACCOUNT_NUMBER_TRANSACTION_DATE
+      #   tests:
+      #     - unique
+
+      # - dbt_utils.unique_combination_of_columns:
+      #    -combination_of_columns:
+      #       - ACCOUNT_NUMBER
+      #       - TRANSACTION_DATE
+      #       - MERCHANT_NAME

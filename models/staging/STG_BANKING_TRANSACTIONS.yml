@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: STG_BANKING_TRANSACTIONS
+    columns:
+      - name: TRANSACTION_ID
+        tests:
+          - not_null
+          - unique
+
+      - name: ACCOUNT_NUMBER
+        tests:
+          - not_null
+
+      - name: TRANSACTION_DATE
+        tests:
+          - not_null
+
+      - name: TRANSACTION_AMOUNT
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      
+      - name: FRAUD_FLAG
+        tests:
+          - accepted_values:
+              values: [0,1]
+
+      - name: TRANSACTION_STATUS
+        tests:
+          - accepted_values:
+              values: [0,1]
+
+      - name: DISCOUNT_APPLIED
+        tests:
+          - accepted_values:
+              values: [0,1]
+
+      - name: LOYALTY_POINTS_EARNED
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
