@@ -1,15 +1,17 @@
-Welcome to your new dbt project!
+# End-to-End Banking Data Warehouse using dbt, Snowflake & Apache Airflow
 
-### Using the starter project
+## 📌 Project Overview
 
-Try running the following commands:
-- dbt run
-- dbt test
+This project implements an end-to-end banking data warehouse pipeline using **Snowflake**, **dbt**, and **Apache Airflow**.
 
+The main goal is to transform raw banking transaction data into a structured analytical data warehouse following a **Star Schema** design.
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+The pipeline includes:
+- Loading raw transaction data into Snowflake.
+- Building a staging layer using dbt for data cleaning and transformation.
+- Implementing data quality tests using dbt tests.
+- Tracking customer changes using dbt Snapshots (SCD Type 2).
+- Creating dimension and fact tables for analytics.
+- Orchestrating the complete workflow using Apache Airflow.
+
+The final warehouse provides a reliable and organized structure for analyzing banking transactions, customer information, merchants, payment methods, and transaction attributes.
