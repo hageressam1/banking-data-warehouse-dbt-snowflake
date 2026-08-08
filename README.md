@@ -1,39 +1,78 @@
+# Banking Data Warehouse — Snowflake, dbt & Airflow
+
+## 📌 Project Overview
+
+This project implements an end-to-end banking data warehouse using **Snowflake**, **dbt Core**, and **Apache Airflow**.
+
 The project includes:
 
-- Loading raw transaction data into Snowflake RAW Layer.
-- Building a staging layer using dbt for data cleaning and transformation.
-- Implementing data quality tests using dbt tests.
-- Tracking customer changes using dbt Snapshots (SCD Type 2).
-- Creating dimension and fact tables for analytics.
-- Orchestrating the dbt workflow using Apache Airflow.
-
+* Loading raw transaction data into the Snowflake RAW layer.
+* Building a staging layer using dbt for data cleaning and transformation.
+* Implementing data quality tests using dbt tests.
+* Tracking customer changes using dbt Snapshots (**SCD Type 2**).
+* Creating dimension and fact tables for analytics.
+* Orchestrating the dbt transformation workflow using Apache Airflow.
 
 The final warehouse provides a reliable and organized structure for analyzing banking transactions, customer information, merchants, payment methods, and transaction attributes.
 
+---
 
 ## 🏗️ Architecture
 
-The project follows a layered data warehouse architecture that transforms raw banking transaction data into an analytics-ready Star Schema.
-
-![Data Pipeline Architecture](docs/data_pipeline_architecture.jpg)
+The project follows a layered data warehouse architecture that transforms raw banking transaction data into an analytics-ready **Star Schema**.
 
 The transformation flow consists of the following layers:
 
-- **Snowflake RAW Layer** — Stores the raw banking transaction data.
-- **dbt Staging Layer** — Cleans and standardizes the raw data.
-- **dbt Snapshot** — Tracks customer changes over time using SCD Type 2.
-- **Marts Layer** — Builds the analytical dimension and fact models.
-- **Analytics Warehouse** — Provides the final analytics-ready data model.
+* **Snowflake RAW Layer** — Stores the raw banking transaction data.
+* **dbt Staging Layer** — Cleans and standardizes the raw data.
+* **dbt Snapshot** — Tracks customer changes over time using SCD Type 2.
+* **Marts Layer** — Builds the analytical dimension and fact models.
+* **Star Schema** — Provides the final analytics-ready warehouse structure.
+
+### Data Pipeline
+
+```text
+Snowflake RAW
+      │
+      ▼
+dbt Staging
+      │
+      ▼
+dbt Snapshot
+      │
+      ▼
+dbt Marts
+      │
+      ▼
+Star Schema
+```
+
+![Data Pipeline Architecture](docs/data_pipeline_architecture.jpg)
+
+---
 
 ## 🔗 dbt Data Lineage
 
-The dbt lineage shows how data flows through the transformation models, from the Snowflake RAW source through the staging layer and downstream analytical models.
+The dbt models transform the raw banking transaction data through the staging layer and into the analytical dimensions and fact table.
+
+The lineage represents the dependencies between:
+
+```text
+RAW Data
+   │
+   ▼
+STG_BANKING_TRANSACTIONS
+   │
+   ├──────────────► Dimensions
+   │
+   └──────────────► Fct_Transaction
+```
 
 ![dbt Data Lineage](docs/dbt_data_lineage.jpg)
 
+---
 
 ## 🛠️ Tech Stack
-
 
 | Technology         | Purpose                                                    |
 | ------------------ | ---------------------------------------------------------- |
@@ -44,20 +83,29 @@ The dbt lineage shows how data flows through the transformation models, from the
 | **Python**         | Airflow DAG development and exploratory data analysis      |
 | **Pandas**         | Exploratory data analysis and dataset exploration          |
 
+---
 
 ## 📊 Data Source
 
+The dataset was sourced from Kaggle and contains banking transactions from **2023–2024**.
 
-The dataset was sourced from Kaggle and contains banking transactions from 2023–2024.
+It includes **5,389 transaction records** and **20 attributes** covering:
 
+* Transaction details
+* Customer information
+* Merchants
+* Categories
+* Locations
+* Payment methods
+* Account balances
+* Fraud indicators
+* Loyalty points
 
-It includes 5,389 transaction records and 20 attributes covering transaction details, customer information, merchants, categories, locations, payment methods, account balances, fraud indicators, and loyalty points.
-
-
-The dataset was explored using Python and Pandas to understand its structure, validate data quality, identify candidate keys, and inspect categorical fields before building the warehouse models.
-
+The dataset was explored using **Python and Pandas** to understand its structure, validate data quality, identify candidate keys, and inspect categorical fields before building the warehouse models.
 
 The data was then loaded into the `RAW` schema in Snowflake and used as the source for the dbt staging layer.
+
+---
 
 ## 🧹 Data Cleaning
 
@@ -65,11 +113,13 @@ Data cleaning and standardization are performed in the dbt staging layer.
 
 The staging model applies transformations such as:
 
-- Trimming and standardizing text fields.
-- Converting transaction dates to timestamps.
-- Standardizing transaction status, fraud flags, and discount indicators.
-- Standardizing customer occupation values.
-- Preparing the raw data for downstream analytical models.
+* Trimming and standardizing text fields.
+* Converting transaction dates to timestamps.
+* Standardizing transaction status, fraud flags, and discount indicators.
+* Standardizing customer occupation values.
+* Preparing the raw data for downstream analytical models.
+
+---
 
 ## 📁 Folder Structure
 
@@ -82,11 +132,11 @@ snowflake_bank_project/
 ├── data/
 │   └── Banking_Transactions_USA_2023_2024.csv
 │
-docs/
-├── Airflow DAG Overview.jpg
-├── airflow_workflow.jpg
-├── data_pipeline_architecture.jpg
-└── dbt_data_lineage.jpg
+├── docs/
+│   ├── Airflow DAG Overview.jpg
+│   ├── airflow_workflow.jpg
+│   ├── data_pipeline_architecture.jpg
+│   └── dbt_data_lineage.jpg
 │
 ├── models/
 │   ├── staging/
@@ -118,19 +168,7 @@ docs/
 └── README.md
 ```
 
-### Folder Description
-
-| Folder / File | Purpose |
-|---|---|
-| `airflow/` | Contains the Airflow DAG used to orchestrate the dbt workflow |
-| `data/` | Contains the source banking transactions dataset |
-| `docs/` | Contains project documentation, Airflow screenshots, and dbt lineage diagrams |
-| `models/staging/` | Contains dbt staging models for cleaning and standardizing raw data |
-| `models/marts/` | Contains analytical dimension and fact models |
-| `snapshots/` | Contains dbt snapshots for tracking historical changes using SCD Type 2 |
-| `notebooks/` | Contains exploratory data analysis notebooks |
-| `dbt_project.yml` | Main dbt project configuration |
-| `packages.yml` | Defines dbt package dependencies |
+---
 
 ## ⭐ Star Schema
 
@@ -146,30 +184,32 @@ The fact table stores transaction-level records and contains foreign keys that l
 
 The fact table contains the following measures and transaction attributes:
 
-- Transaction amount
-- Discount applied
-- Loyalty points earned
-- Fraud flag
-- Transaction status
+* Transaction amount
+* Discount applied
+* Loyalty points earned
+* Fraud flag
+* Transaction status
 
 ### Dimension Tables
 
 The fact table is connected to the following dimension tables:
 
-- `Dim_Customer`
-- `Dim_Date`
-- `Dim_Time`
-- `Dim_Category`
-- `Dim_Merchant`
-- `Dim_PaymentMethod`
-- `Dim_Transaction_Type`
-- `Dim_Location`
+* `Dim_Customer`
+* `Dim_Date`
+* `Dim_Time`
+* `Dim_Category`
+* `Dim_Merchant`
+* `Dim_PaymentMethod`
+* `Dim_Transaction_Type`
+* `Dim_Location`
 
 This dimensional model organizes banking transaction data and enables analytical queries across different business perspectives.
 
+---
+
 ## ⚙️ Airflow Orchestration
 
-Apache Airflow is used to orchestrate and schedule the dbt workflow.
+Apache Airflow is used to orchestrate and schedule the **dbt transformation workflow**.
 
 The DAG controls the execution order of the dbt tasks and ensures that each task runs after the previous task completes successfully.
 
@@ -188,8 +228,6 @@ run_dbt_models
 dbt_test
 ```
 
-![Airflow DAG Workflow](docs/airflow_workflow.jpg)
-
 ### DAG Tasks
 
 | Task             | Description                                                         |
@@ -203,11 +241,15 @@ The Airflow DAG is scheduled to run daily with `catchup=False`.
 
 ![Airflow DAG Overview](docs/Airflow%20DAG%20Overview.jpg)
 
-## 🚀 Setup & Run
+![Airflow DAG Workflow](docs/airflow_workflow.jpg)
+
+---
+
+# 🚀 Setup & Run
 
 Follow these steps to set up and run the project locally.
 
-### 1. Prerequisites
+## 1. Prerequisites
 
 Make sure you have:
 
@@ -218,7 +260,7 @@ Make sure you have:
 
 ---
 
-### 2. Clone the Repository
+## 2. Clone the Repository
 
 Clone the project from GitHub and move into the project directory:
 
@@ -227,7 +269,9 @@ git clone https://github.com/hageressam1/banking-data-warehouse-dbt-snowflake.gi
 cd banking-data-warehouse-dbt-snowflake
 ```
 
-### 3. Create the Python Environment
+---
+
+## 3. Create the Python Environment
 
 Create and activate the virtual environment used by dbt and Airflow:
 
@@ -242,7 +286,9 @@ Verify Python:
 python --version
 ```
 
-### 4. Install dbt
+---
+
+## 4. Install dbt
 
 Install dbt Core with the Snowflake adapter:
 
@@ -262,7 +308,9 @@ Install the project's dbt packages:
 dbt deps
 ```
 
-### 5. Configure dbt → Snowflake
+---
+
+## 5. Configure dbt → Snowflake
 
 dbt connects to Snowflake through:
 
@@ -270,7 +318,7 @@ dbt connects to Snowflake through:
 ~/.dbt/profiles.yml
 ```
 
-Create/configure the profile with your own Snowflake credentials:
+Create or configure the profile with your own Snowflake credentials:
 
 ```text
 account
@@ -299,7 +347,9 @@ dbt debug
 
 The connection should be successful before running the project.
 
-### 6. Prepare the Snowflake RAW Layer
+---
+
+## 6. Prepare the Snowflake RAW Layer
 
 Before running dbt, load the source CSV into Snowflake.
 
@@ -330,7 +380,9 @@ models/staging/sources.yml
 
 The RAW table stores the original banking transaction data and is used as the source for the dbt staging layer.
 
-### 7. Install Apache Airflow
+---
+
+## 7. Install Apache Airflow
 
 Make sure the virtual environment is active:
 
@@ -357,7 +409,9 @@ Create the DAG directory:
 mkdir -p ~/airflow/dags
 ```
 
-### 8. Add the Project DAG to Airflow
+---
+
+## 8. Add the Project DAG to Airflow
 
 The DAG is stored in the repository at:
 
@@ -377,7 +431,9 @@ The repository version is kept under Git for version control, while Airflow read
 ~/airflow/dags/
 ```
 
-### 9. Start Airflow
+---
+
+## 9. Start Airflow
 
 Start Airflow in standalone mode:
 
@@ -403,9 +459,13 @@ After logging in, find the DAG:
 dbt_run_snowflake_bank_project
 ```
 
-### 10. Run and Monitor the Pipeline
+---
 
-The Airflow DAG orchestrates the complete workflow:
+## 10. Run and Monitor the Pipeline
+
+Open the DAG in the Airflow UI and click **Trigger DAG** to start a run.
+
+The DAG executes the dbt workflow in the following order:
 
 ```text
 run_staging
@@ -420,63 +480,17 @@ run_dbt_models
 dbt_test
 ```
 
-To start a run manually, open the DAG and click **Trigger DAG**.
-
-You can monitor the run from the Airflow UI, including:
+You can monitor:
 
 * DAG run status
 * Task status
 * Task logs
 
-#### `run_staging`
+The pipeline must complete the tasks in order, with each task depending on the successful completion of the previous task.
 
-Runs:
+---
 
-```bash
-dbt run --select STG_BANKING_TRANSACTIONS
-```
-
-Creates the staging layer and cleans and standardizes the raw data.
-
-#### `run_snapshot`
-
-Runs:
-
-```bash
-dbt snapshot
-```
-
-Tracks customer changes over time using **SCD Type 2**.
-
-The snapshot checks changes in:
-
-```text
-ACCOUNT_BALANCE
-CUSTOMER_INCOME
-CUSTOMER_OCCUPATION
-```
-
-#### `run_dbt_models`
-
-Runs:
-
-```bash
-dbt run --exclude STG_BANKING_TRANSACTIONS
-```
-
-Builds the remaining analytical models, including the dimensions and fact table.
-
-#### `dbt_test`
-
-Runs:
-
-```bash
-dbt test
-```
-
-Executes the project's data quality tests.
-
-### 11. Manual dbt Execution
+## 11. Manual dbt Execution
 
 The same workflow can also be executed manually without Airflow:
 
@@ -491,4 +505,3 @@ dbt test
 ```
 
 This follows the same execution order as the Airflow DAG.
-
