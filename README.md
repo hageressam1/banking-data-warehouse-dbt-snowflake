@@ -13,15 +13,12 @@ The project includes:
 * Creating dimension and fact tables for analytics.
 * Orchestrating the dbt transformation workflow using Apache Airflow.
 
-The final warehouse provides a reliable and organized structure for analyzing banking transactions, customer information, merchants, payment methods, and transaction attributes.
 
 ---
 
 ## 🏗️ Architecture
 
 The project follows a layered data warehouse architecture that transforms raw banking transaction data into an analytics-ready **Star Schema**.
-
-The transformation flow consists of the following layers:
 
 * **Snowflake RAW Layer** — Stores the raw banking transaction data.
 * **dbt Staging Layer** — Cleans and standardizes the raw data.
@@ -50,13 +47,9 @@ Star Schema
 ![Data Pipeline Architecture](docs/data_pipeline_architecture.jpg)
 
 ---
-
 ## 🔗 dbt Data Lineage
 
-The dbt models transform the raw banking transaction data through the staging layer and into the analytical dimensions and fact table.
-
-The lineage represents the dependencies between:
-
+The dbt lineage shows the dependencies between the staging model, snapshot, dimensions, and fact table.
 
 ![dbt Data Lineage](docs/dbt_data_lineage.jpg)
 
@@ -126,7 +119,8 @@ snowflake_bank_project/
 │   ├── Airflow DAG Overview.jpg
 │   ├── airflow_workflow.jpg
 │   ├── data_pipeline_architecture.jpg
-│   └── dbt_data_lineage.jpg
+│   ├── dbt_data_lineage.jpg
+│   └── star_schema.jpg
 │
 ├── models/
 │   ├── staging/
@@ -158,8 +152,6 @@ snowflake_bank_project/
 └── README.md
 ```
 
----
-
 ## ⭐ Star Schema
 
 The analytical layer follows a **Star Schema** design, where a central fact table is connected to multiple dimension tables.
@@ -168,11 +160,11 @@ The analytical layer follows a **Star Schema** design, where a central fact tabl
 
 **`Fct_Transaction`**
 
-The fact table stores transaction-level records and contains foreign keys that link transactions to the related dimension tables.
+The fact table stores transaction-level records and contains foreign keys linking transactions to the related dimensions.
 
 ### Measures
 
-The fact table contains the following measures and transaction attributes:
+The `Fct_Transaction` table contains the following measures and transaction attributes:
 
 * Transaction amount
 * Discount applied
@@ -180,20 +172,9 @@ The fact table contains the following measures and transaction attributes:
 * Fraud flag
 * Transaction status
 
-### Dimension Tables
+### Star Schema Diagram
 
-The fact table is connected to the following dimension tables:
-
-* `Dim_Customer`
-* `Dim_Date`
-* `Dim_Time`
-* `Dim_Category`
-* `Dim_Merchant`
-* `Dim_PaymentMethod`
-* `Dim_Transaction_Type`
-* `Dim_Location`
-
-This dimensional model organizes banking transaction data and enables analytical queries across different business perspectives.
+![Star Schema Diagram](docs/star_schema.jpg)
 
 ---
 
@@ -201,9 +182,7 @@ This dimensional model organizes banking transaction data and enables analytical
 
 Apache Airflow is used to orchestrate and schedule the **dbt transformation workflow**.
 
-The DAG controls the execution order of the dbt tasks and ensures that each task runs after the previous task completes successfully.
-
-The workflow execution order is:
+The DAG executes the dbt tasks in the following order:
 
 ```text
 run_staging
@@ -368,7 +347,6 @@ The table is configured as a dbt source in:
 models/staging/sources.yml
 ```
 
-The RAW table stores the original banking transaction data and is used as the source for the dbt staging layer.
 
 ---
 
@@ -455,28 +433,11 @@ dbt_run_snowflake_bank_project
 
 Open the DAG in the Airflow UI and click **Trigger DAG** to start a run.
 
-The DAG executes the dbt workflow in the following order:
-
-```text
-run_staging
-      │
-      ▼
-run_snapshot
-      │
-      ▼
-run_dbt_models
-      │
-      ▼
-dbt_test
-```
-
 You can monitor:
-
 * DAG run status
 * Task status
 * Task logs
 
-The pipeline must complete the tasks in order, with each task depending on the successful completion of the previous task.
 
 ---
 
