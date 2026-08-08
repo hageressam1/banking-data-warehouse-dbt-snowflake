@@ -57,16 +57,6 @@ The dbt models transform the raw banking transaction data through the staging la
 
 The lineage represents the dependencies between:
 
-```text
-RAW Data
-   │
-   ▼
-STG_BANKING_TRANSACTIONS
-   │
-   ├──────────────► Dimensions
-   │
-   └──────────────► Fct_Transaction
-```
 
 ![dbt Data Lineage](docs/dbt_data_lineage.jpg)
 
